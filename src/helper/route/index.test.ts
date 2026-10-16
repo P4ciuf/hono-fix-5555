@@ -237,4 +237,30 @@ describe('basePath', () => {
 
     expect(basePath(c)).toBe('/sub-app-path/foo')
   })
+
+  it('should return basePath with a numeric regex pattern', () => {
+    const handler = () => {}
+    const c = new Context(new Request('http://localhost'), {
+      path: '/sub-app-path/123/key',
+      matchResult: [
+        [
+          [
+            [
+              handler,
+              {
+                basePath: '/sub-app-path/:sub{[0-9]+}',
+                handler,
+                method: 'GET',
+                path: '/:id',
+              },
+            ],
+            { sub: '123', id: 'key' },
+          ],
+        ],
+      ],
+      ...defaultContextOptions,
+    })
+
+    expect(basePath(c)).toBe('/sub-app-path/123')
+  })
 })
